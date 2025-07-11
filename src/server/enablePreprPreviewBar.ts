@@ -1,18 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-async function safeImport(pkgName: string) {
-  try {
-    return await import(pkgName);
-  } catch (err) {
-    if (
-      (err as any).code === 'ERR_MODULE_NOT_FOUND' ||
-      (err as any).message.includes('Cannot find module')
-    ) {
-      return null;
-    }
-    throw err;
-  }
-}
+import { ipAddress } from '@vercel/functions';
 
 /**
  * Middleware to set Prepr headers for personalization.
@@ -23,10 +10,6 @@ export default async function enablePreprPreviewBar(
   request: NextRequest,
   response: NextResponse
 ) {
-  // only include vercel functions if they are installed
-  // otherwise this package won't work in non-vercel environments
-  const vercelFunctions = await safeImport('@vercel/functions');
-
   const searchParams = new URLSearchParams(request.nextUrl.search);
 
   // Map over search params and set headers
@@ -57,11 +40,9 @@ export default async function enablePreprPreviewBar(
   }
 
   // Set IP address header
-  if (vercelFunctions) {
-    const ip = vercelFunctions.ipAddress(request);
-    if (ip) {
-      response.headers.set('Prepr-Visitor-IP', ip);
-    }
+  const ip = ipAddress(request);
+  if (ip) {
+    response.headers.set('Prepr-Visitor-IP', ip);
   }
 
   // Set HubSpot cookie header
