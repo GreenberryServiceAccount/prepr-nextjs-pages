@@ -1,5 +1,5 @@
-import { ipAddress } from '@vercel/functions';
-import { NextRequest, NextResponse } from 'next/server';
+import { ipAddress } from '@vercel/functions/index.js';
+import { NextRequest, NextResponse } from 'next/server.js';
 
 /**
  * Middleware to set Prepr headers for personalization.

@@ -1,7 +1,7 @@
 import React from 'react';
 import { PreprSegment } from '../../types';
 import { useSegmentContext } from '../contexts';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router.js';
 import {
   Listbox,
   ListboxButton,
