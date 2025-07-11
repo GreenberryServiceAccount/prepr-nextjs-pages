@@ -17,7 +17,7 @@ export default defineConfig((options) => {
             },
             onSuccess: "pnpm run build:css",
             clean: true,
-            external: ['react', 'react-dom', 'next/router'],
+            external: ['react', 'react-dom', 'next/router', 'next/server'],
             // Bundle analysis
             metafile: !options.watch,
   
@@ -35,7 +35,7 @@ export default defineConfig((options) => {
             dts: true,
             minify: !options.watch,
             sourcemap: true,
-            external: ['react', 'react-dom'],
+            external: ['react', 'react-dom', 'next/server', 'next/router'],
             // Bundle analysis
             metafile: !options.watch,
             // Tree shaking

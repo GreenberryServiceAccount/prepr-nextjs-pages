@@ -1,4 +1,4 @@
-import { NextIncomingMessage } from 'next/dist/server/request-meta';
+import { NextIncomingMessage } from 'next/dist/server/request-meta.js';
 import pjson from '../../package.json';
 import { PreprPreviewBarProps, PreprSegment } from '../types';
 
