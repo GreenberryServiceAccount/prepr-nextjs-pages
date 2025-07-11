@@ -1,7 +1,7 @@
 import React from 'react';
 // import classNames from 'classnames';
 // import { FaRotate } from 'react-icons/fa6';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router.js';
 import { cn } from '../../utils';
 import { usePreprPreviewBar } from '../prepr-previewbar-provider';
 import Rotate from './icons/rotate';

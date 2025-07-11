@@ -17,7 +17,7 @@ export default defineConfig((options) => {
             },
             onSuccess: "pnpm run build:css",
             clean: true,
-            external: ['react', 'react-dom', 'next/navigation'],
+            external: ['react', 'react-dom', 'next/router'],
             // Bundle analysis
             metafile: !options.watch,
   
