@@ -1,13 +1,12 @@
 import React from 'react';
 import { useVariantContext } from '../contexts';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import RadioSelector from './radio-selector';
 
 export default function VariantSelector() {
   const { selectedVariant, setSelectedVariant, emptyVariant } =
     useVariantContext();
 
-  const pathname = usePathname();
   const router = useRouter();
 
   const updateSelectedVariant = (value: string | boolean) => {
@@ -15,10 +14,7 @@ export default function VariantSelector() {
     setSelectedVariant(String(value));
     params.set('prepr_preview_ab', String(value));
 
-    router.push(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-    router.refresh();
+    router.push(`${router.asPath.split('?')[0]}?${params.toString()}`);
   };
 
   const options = [

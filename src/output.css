@@ -56,6 +56,9 @@
 .p-h-10 {
   height: 2.5rem;
 }
+.p-h-3 {
+  height: 0.75rem;
+}
 .p-h-4 {
   height: 1rem;
 }
@@ -68,6 +71,9 @@
 .\!p-max-h-\[300px\] {
   max-height: 300px !important;
 }
+.p-w-3 {
+  width: 0.75rem;
+}
 .p-w-4 {
   width: 1rem;
 }
@@ -79,6 +85,9 @@
 }
 .p-w-\[58px\] {
   width: 58px;
+}
+.p-w-\[82px\] {
+  width: 82px;
 }
 .p-w-full {
   width: 100%;
@@ -253,8 +262,8 @@
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
-.p-pr-4 {
-  padding-right: 1rem;
+.p-pr-2 {
+  padding-right: 0.5rem;
 }
 .p-text-center {
   text-align: center;
@@ -363,7 +372,6 @@
   --prepr-transition: all 0.2s ease;
   --prepr-z-overlay: 10000;
   --prepr-z-tooltip: 10001;
-  --prepr-gradient-size: 150px;
   --prepr-proximity-distance: 300px;
 }
 
@@ -398,60 +406,59 @@
   position: relative;
 }
 
+/* Original overlay styling - positioned by JavaScript */
 .prepr-overlay {
-  pointer-events: none;
   position: absolute;
-  border-radius: 0.25rem;
-  border-width: 2px;
-  --tw-border-opacity: 1;
-  border-color: rgb(79 70 229 / var(--tw-border-opacity, 1));
-  transition-property: all;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  inset: -2px;
+  pointer-events: none;
+  border: 2px solid #4f46e5;
+  border-radius: 4px 0px 4px 4px;
+  transition: all 0.2s ease-in-out;
   z-index: var(--prepr-z-overlay);
 }
 
+/* Original tooltip styling - positioned by JavaScript */
 .prepr-tooltip {
-  pointer-events: auto;
   position: absolute;
+  background-color: #4f46e5;
+  color: white;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px 4px 0 0;
+  white-space: nowrap;
   z-index: var(--prepr-z-tooltip);
   min-width: 80px;
-  cursor: pointer;
-  white-space: nowrap;
-  border-radius: 0.25rem;
-  --tw-bg-opacity: 1;
-  background-color: rgb(79 70 229 / var(--tw-bg-opacity, 1));
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
   text-align: center;
-  font-size: 0.75rem;
-  line-height: 1rem;
-  line-height: 1;
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-  transition-property: opacity;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: var(--prepr-border-radius) var(--prepr-border-radius) 0 0;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .prepr-tooltip:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(67 56 202 / var(--tw-bg-opacity, 1));
+  background-color: #4338ca;
 }
 
+/* Ensure proximity highlights are not clipped by parent containers */
 .prepr-proximity-highlight {
   position: relative;
+  z-index: 1;
+}
+
+/* Temporarily override parent overflow to show proximity highlight */
+.prepr-proximity-highlight,
+.prepr-proximity-highlight * {
+  overflow: visible !important;
 }
 
 .prepr-proximity-highlight::before {
   content: '';
   position: absolute;
-  inset: -1px -4px;
+  top: -2px;
+  left: -4px;
+  right: -4px;
+  bottom: -2px;
   pointer-events: none;
+  overflow: visible;
   background: radial-gradient(
     circle var(--gradient-size) at var(--cursor-x) var(--cursor-y),
     rgba(79, 70, 229, 0.15) 0%,
@@ -460,6 +467,7 @@
   border: 2px solid rgba(79, 70, 229, 0.15);
   border-radius: var(--prepr-border-radius);
   transition: var(--prepr-transition);
+  z-index: 9999;
 }
 
 /* Hide proximity highlight when overlay is active */
@@ -541,6 +549,11 @@
 .hover\:p-bg-primary-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(224 231 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:p-bg-primary-800:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 48 163 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:p-text-gray-700:hover {

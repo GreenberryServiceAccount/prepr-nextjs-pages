@@ -1,54 +1,60 @@
-import { headers } from 'next/headers';
-import { PreprPreviewBarProps, PreprSegment } from '../types';
+import { NextIncomingMessage } from 'next/dist/server/request-meta';
 import pjson from '../../package.json';
+import { PreprPreviewBarProps, PreprSegment } from '../types';
+
+function getHeadersList(req: NextIncomingMessage) {
+  return Object.entries(req.headers) as [string, string][];
+}
+
+function getHeaderValue(
+  headersList: [string, string][],
+  key: string
+): string | null {
+  return (
+    (headersList.find(([headerKey]) => headerKey === key)?.[1] as string) ??
+    null
+  );
+}
 
 /**
  * Returns the Prepr Customer ID from the headers
  */
-export async function getPreprUUID() {
-  const headersList = await headers();
-  return headersList.get('prepr-customer-id');
+export function getPreprUUID(req: NextIncomingMessage) {
+  const headersList = getHeadersList(req);
+  return getHeaderValue(headersList, 'prepr-customer-id');
 }
 
 /**
  * Retuns the active segment from the headers
  */
-export async function getActiveSegment() {
-  const headersList = await headers();
-  return headersList.get('Prepr-Segments');
+export function getActiveSegment(req: NextIncomingMessage): string | null {
+  const headersList = getHeadersList(req);
+  return getHeaderValue(headersList, 'prepr-segments');
 }
 
 /**
  * Returns the active variant from the headers
  */
-export async function getActiveVariant() {
-  const headersList = await headers();
-  return headersList.get('Prepr-ABtesting');
+export function getActiveVariant(req: NextIncomingMessage) {
+  const headersList = getHeadersList(req);
+  return getHeaderValue(headersList, 'prepr-abtesting');
 }
 
 /**
  * Helper function to retrieve Prepr headers (will filter out customer ID if in preview mode)
  */
-export async function getPreprHeaders() {
-  const newHeaders: {
-    [key: string]: string;
-  } = {};
+export function getPreprHeaders(req: NextIncomingMessage) {
+  const headersList = getHeadersList(req);
 
-  const headersList = await headers();
-
-  headersList.forEach((value, key) => {
-    if (key.startsWith('prepr')) {
-      newHeaders[key] = value;
-    }
-  });
-
-  return newHeaders;
+  return Object.fromEntries(
+    headersList.filter(([key]) => key.startsWith('prepr'))
+  );
 }
 
 /**
  * Fetches the segments from the Prepr API
- * @param token Prepr access token with scope 'segments'
- * @returns Array of PreprSegmentResponse
+ * @param {string} token Prepr access token with scope 'segments'
+ * @returns {Array} Array of PreprSegmentResponse
  */
 export async function getPreprEnvironmentSegments(
   token: string
@@ -75,22 +81,30 @@ export async function getPreprEnvironmentSegments(
       },
       method: 'POST',
       body: JSON.stringify({
-        query: `{
-                _Segments {
-                    _id
-                    name
-                }
-            }`,
+        query: `{ _Segments { _id name } }`,
       }),
     });
+    const text = await response.text();
     try {
-      const json = await response.json();
+      const json = JSON.parse(text);
 
-      if (!json || !json.data || !json.data._Segments) {
+      if (!json) {
+        console.error('Error parsing JSON, please contact Prepr support');
         return [];
       }
 
-      return json.data?._Segments as PreprSegment[];
+      if (json.errors) {
+        console.error('Error fetching segments:', json.errors);
+        console.error('Make sure the token has edit mode enabled in settings');
+        return [];
+      }
+
+      if (!json.data?._Segments) {
+        console.error('Error parsing JSON, please contact Prepr support');
+        return [];
+      }
+
+      return json.data._Segments as PreprSegment[];
     } catch {
       console.error('Error parsing JSON, please contact Prepr support');
       return [];
@@ -103,21 +117,27 @@ export async function getPreprEnvironmentSegments(
 
 /**
  * Fetches all the necessary previewbar props
- * @param token Prepr access token with scope 'segments'
- * @returns Object with activeSegment, activeVariant and data
+ * @param {string} token Prepr access token with scope 'segments'
+ * @returns {Object} Object with activeSegment, activeVariant and data
  */
-export async function getPreviewBarProps(
-  token: string
-): Promise<PreprPreviewBarProps> {
+export async function getPreviewBarProps({
+  req,
+  token,
+  isEnabled = false,
+}: {
+  req: NextIncomingMessage;
+  token: string;
+  isEnabled?: boolean;
+}): Promise<PreprPreviewBarProps> {
   let data: PreprSegment[] = [];
   let activeSegment: string | null = null;
   let activeVariant: string | null = null;
 
   // Prevent unnecessary function calling in production
-  if (process.env.PREPR_ENV === 'preview') {
+  if (isEnabled) {
     data = await getPreprEnvironmentSegments(token);
-    activeSegment = await getActiveSegment();
-    activeVariant = await getActiveVariant();
+    activeSegment = getActiveSegment(req);
+    activeVariant = getActiveVariant(req);
   }
 
   return {
@@ -130,3 +150,5 @@ export async function getPreviewBarProps(
 function getPackageVersion() {
   return pjson.version;
 }
+
+export { default as enablePreprPreviewBar } from './enablePreprPreviewBar';

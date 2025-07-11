@@ -1,7 +1,7 @@
 import React from 'react';
 // import classNames from 'classnames';
 // import { FaRotate } from 'react-icons/fa6';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { cn } from '../../utils';
 import { usePreprPreviewBar } from '../prepr-previewbar-provider';
 import Rotate from './icons/rotate';
@@ -10,7 +10,6 @@ export default function ResetButton() {
   const router = useRouter();
   const { resetAll, selectedVariant, selectedSegment, setEditMode, editMode } =
     usePreprPreviewBar();
-  const pathname = usePathname();
   const enabled =
     selectedSegment._id !== 'null' || selectedVariant !== 'null' || editMode;
 
@@ -24,18 +23,12 @@ export default function ResetButton() {
 
     setEditMode(false);
 
-    router.push(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-    router.refresh();
+    router.push(`${router.asPath.split('?')[0]}?${params.toString()}`);
 
     // Remove the params from the URL
     params.delete('prepr_preview_segment');
     params.delete('prepr_preview_ab');
-    router.push(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-    router.refresh();
+    router.push(`${router.asPath.split('?')[0]}?${params.toString()}`);
   };
 
   const classes = cn(
