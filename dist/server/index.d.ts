@@ -1,6 +1,6 @@
-import { NextIncomingMessage } from 'next/dist/server/request-meta.js';
+import { NextIncomingMessage } from 'next/dist/server/request-meta';
 import { PreprSegment, PreprPreviewBarProps } from '../types/index.js';
-import { NextRequest, NextResponse } from 'next/server.js';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Middleware to set Prepr headers for personalization.

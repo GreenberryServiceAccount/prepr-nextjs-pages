@@ -1,6 +1,6 @@
 import React from 'react';
 import { useVariantContext } from '../contexts';
-import { useRouter } from 'next/router.js';
+import { useRouter } from 'next/router';
 import RadioSelector from './radio-selector';
 
 export default function VariantSelector() {

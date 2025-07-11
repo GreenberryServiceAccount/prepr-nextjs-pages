@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PreviewBar } from './preview-bar';
-import { useRouter } from 'next/router.js';
+import { useRouter } from 'next/router';
 
 export default function PreviewBarWrapper() {
   const router = useRouter();
