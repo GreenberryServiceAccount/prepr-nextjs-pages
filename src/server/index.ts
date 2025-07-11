@@ -84,9 +84,9 @@ export async function getPreprEnvironmentSegments(
         query: `{ _Segments { _id name } }`,
       }),
     });
-    const text = await response.text();
+
     try {
-      const json = JSON.parse(text);
+      const json = await response.json();
 
       if (!json) {
         console.error('Error parsing JSON, please contact Prepr support');
