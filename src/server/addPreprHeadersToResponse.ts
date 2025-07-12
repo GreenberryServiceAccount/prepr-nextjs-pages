@@ -1,20 +1,23 @@
+import { NextRequest, NextResponse } from 'next/server.js';
 import { ipAddress } from '@vercel/functions';
-import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Middleware to set Prepr headers for personalization.
- * @param request - NextRequest object.
- * @param preview - Boolean indicating if preview mode is enabled.
+ * @param {import("next/server").NextRequest} request - NextRequest object.
+ * @param {import("next/server").NextResponse} response - NextRequest object.
+ * @param {object} options - Options object.
+ * @param {boolean} options.isPreprPreviewBarEnabled - Whether to enable the Prepr preview bar.
  */
-export default function createPreprMiddleware(request: NextRequest) {
-  if (!process.env.PREPR_GRAPHQL_URL) {
-    console.error('PREPR_GRAPHQL_URL is not set');
-  }
-
-  const response = NextResponse.next();
+export default async function addPreprHeadersToResponse(
+  request: NextRequest,
+  response: NextResponse,
+  options: { isPreprPreviewBarEnabled: boolean }
+) {
+  const { isPreprPreviewBarEnabled = false } = options;
+  const searchParams = new URLSearchParams(request.nextUrl.search);
 
   // Map over search params and set headers
-  request.nextUrl.searchParams.forEach((value, key) => {
+  searchParams.forEach((value, key) => {
     switch (key) {
       case 'utm_source':
         response.headers.set('Prepr-Context-utm_source', value);
@@ -65,34 +68,36 @@ export default function createPreprMiddleware(request: NextRequest) {
   // Set the Prepr Customer ID header
   response.headers.set('Prepr-Customer-Id', cookie);
 
-  // If preview mode is enabled, set additional headers
-  if (process.env.PREPR_ENV === 'preview') {
-    response.headers.set('Prepr-Preview-Bar', 'true');
-
-    // Set Prepr Preview Segment and AB test cookies
-    const segmentCookie = request.cookies.get('Prepr-Segments')?.value;
-    if (segmentCookie) {
-      response.headers.set('Prepr-Segments', segmentCookie);
-    }
-
-    const abCookie = request.cookies.get('Prepr-ABtesting')?.value;
-    if (abCookie) {
-      response.headers.set('Prepr-ABtesting', abCookie);
-    }
-
-    // Set Prepr Preview Segment and AB test headers from query params
-    request.nextUrl.searchParams.forEach((value, key) => {
-      if (key === 'prepr_preview_ab') {
-        response.headers.set('Prepr-ABtesting', value);
-        response.cookies.set('Prepr-ABtesting', value);
-      }
-
-      if (key === 'prepr_preview_segment') {
-        response.headers.set('Prepr-Segments', value);
-        response.cookies.set('Prepr-Segments', value);
-      }
-    });
+  if (!isPreprPreviewBarEnabled) {
+    return response;
   }
+
+  // If preview mode is enabled, set additional headers
+  response.headers.set('Prepr-Preview-Bar', 'true');
+
+  // Set Prepr Preview Segment and AB test cookies
+  const segmentCookie = request.cookies.get('Prepr-Segments')?.value;
+  if (segmentCookie) {
+    response.headers.set('Prepr-Segments', segmentCookie);
+  }
+
+  const abCookie = request.cookies.get('Prepr-ABtesting')?.value;
+  if (abCookie) {
+    response.headers.set('Prepr-ABtesting', abCookie);
+  }
+
+  // Set Prepr Preview Segment and AB test headers from query params
+  searchParams.forEach((value, key) => {
+    if (key === 'prepr_preview_ab') {
+      response.headers.set('Prepr-ABtesting', value);
+      response.cookies.set('Prepr-ABtesting', value);
+    }
+
+    if (key === 'prepr_preview_segment') {
+      response.headers.set('Prepr-Segments', value);
+      response.cookies.set('Prepr-Segments', value);
+    }
+  });
 
   return response;
 }

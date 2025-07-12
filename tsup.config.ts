@@ -17,7 +17,7 @@ export default defineConfig((options) => {
             },
             onSuccess: "pnpm run build:css",
             clean: true,
-            external: ['react', 'react-dom', 'next/navigation'],
+            external: ['react', 'react-dom', 'next/router', 'next/server'],
             // Bundle analysis
             metafile: !options.watch,
   
@@ -26,7 +26,6 @@ export default defineConfig((options) => {
         },
         {
             entry: {
-                "middleware/index": "src/middleware/index.ts",
                 "server/index": "src/server/index.ts",
                 "types/index": "src/types/index.ts",
                 "utils/index": "src/utils/index.ts",
@@ -35,7 +34,7 @@ export default defineConfig((options) => {
             dts: true,
             minify: !options.watch,
             sourcemap: true,
-            external: ['react', 'react-dom'],
+            external: ['react', 'react-dom', 'next/server', 'next/router'],
             // Bundle analysis
             metafile: !options.watch,
             // Tree shaking

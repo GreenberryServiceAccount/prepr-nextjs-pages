@@ -2,4 +2,3 @@ node_modules
 .turbo
 tsconfig.tsbuildinfo
 dist
-src/output.css

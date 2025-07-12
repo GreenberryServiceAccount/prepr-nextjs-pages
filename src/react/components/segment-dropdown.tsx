@@ -1,7 +1,7 @@
 import React from 'react';
 import { PreprSegment } from '../../types';
 import { useSegmentContext } from '../contexts';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/router.js';
 import {
   Listbox,
   ListboxButton,
@@ -14,7 +14,6 @@ import { cn } from '../../utils';
 export default function SegmentDropdown() {
   const { segments, setSelectedSegment, selectedSegment } = useSegmentContext();
 
-  const pathname = usePathname();
   const router = useRouter();
 
   const updateSelectedSegment = (value: string) => {
@@ -25,10 +24,7 @@ export default function SegmentDropdown() {
       setSelectedSegment(segment);
       params.set('prepr_preview_segment', value);
 
-      router.push(`${pathname}?${params.toString()}`, {
-        scroll: false,
-      });
-      router.refresh();
+      router.push(`${router.asPath.split('?')[0]}?${params.toString()}`);
     }
   };
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { PreviewBar } from './preview-bar';
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router.js';
 
 export default function PreviewBarWrapper() {
-  const searchParams = useSearchParams();
+  const router = useRouter();
   const [isIframe, setIsIframe] = useState<boolean>(false);
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -37,7 +37,7 @@ export default function PreviewBarWrapper() {
     };
   }, []);
 
-  if (searchParams.get('prepr_hide_bar') === 'true' || isIframe) {
+  if (router.query.prepr_hide_bar === 'true' || isIframe) {
     return null;
   }
 
