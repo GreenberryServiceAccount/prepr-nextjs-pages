@@ -5,11 +5,15 @@ import { ipAddress } from '@vercel/functions';
  * Middleware to set Prepr headers for personalization.
  * @param {import("next/server").NextRequest} request - NextRequest object.
  * @param {import("next/server").NextResponse} response - NextRequest object.
+ * @param {object} options - Options object.
+ * @param {boolean} options.isPreprPreviewBarEnabled - Whether to enable the Prepr preview bar.
  */
-export default async function enablePreprPreviewBar(
+export default async function addPreprHeadersToResponse(
   request: NextRequest,
-  response: NextResponse
+  response: NextResponse,
+  options: { isPreprPreviewBarEnabled: boolean }
 ) {
+  const { isPreprPreviewBarEnabled = false } = options;
   const searchParams = new URLSearchParams(request.nextUrl.search);
 
   // Map over search params and set headers
@@ -63,6 +67,10 @@ export default async function enablePreprPreviewBar(
 
   // Set the Prepr Customer ID header
   response.headers.set('Prepr-Customer-Id', cookie);
+
+  if (!isPreprPreviewBarEnabled) {
+    return response;
+  }
 
   // If preview mode is enabled, set additional headers
   response.headers.set('Prepr-Preview-Bar', 'true');

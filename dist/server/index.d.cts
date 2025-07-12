@@ -6,8 +6,12 @@ import { NextRequest, NextResponse } from 'next/server.js';
  * Middleware to set Prepr headers for personalization.
  * @param {import("next/server").NextRequest} request - NextRequest object.
  * @param {import("next/server").NextResponse} response - NextRequest object.
+ * @param {object} options - Options object.
+ * @param {boolean} options.isPreprPreviewBarEnabled - Whether to enable the Prepr preview bar.
  */
-declare function enablePreprPreviewBar(request: NextRequest, response: NextResponse): Promise<NextResponse<unknown>>;
+declare function addPreprHeadersToResponse(request: NextRequest, response: NextResponse, options: {
+    isPreprPreviewBarEnabled: boolean;
+}): Promise<NextResponse<unknown>>;
 
 /**
  * Returns the Prepr Customer ID from the headers
@@ -44,4 +48,4 @@ declare function getPreviewBarProps({ req, token, isEnabled, }: {
     isEnabled?: boolean;
 }): Promise<PreprPreviewBarProps>;
 
-export { enablePreprPreviewBar, getActiveSegment, getActiveVariant, getPreprEnvironmentSegments, getPreprHeaders, getPreprUUID, getPreviewBarProps };
+export { addPreprHeadersToResponse, getActiveSegment, getActiveVariant, getPreprEnvironmentSegments, getPreprHeaders, getPreprUUID, getPreviewBarProps };

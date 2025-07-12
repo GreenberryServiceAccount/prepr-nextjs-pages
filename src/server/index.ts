@@ -151,4 +151,4 @@ function getPackageVersion() {
   return pjson.version;
 }
 
-export { default as enablePreprPreviewBar } from './enablePreprPreviewBar';
+export { default as addPreprHeadersToResponse } from './addPreprHeadersToResponse';
