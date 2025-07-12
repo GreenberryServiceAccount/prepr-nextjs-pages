@@ -23,11 +23,6 @@
     "prepublishOnly": "npm run check && npm run build"
   },
   "exports": {
-    "./middleware": {
-      "import": "./dist/middleware/index.js",
-      "types": "./dist/middleware/index.d.ts",
-      "require": "./dist/middleware/index.cjs"
-    },
     "./server": {
       "import": "./dist/server/index.js",
       "types": "./dist/server/index.d.ts",

@@ -26,7 +26,6 @@ export default defineConfig((options) => {
         },
         {
             entry: {
-                "middleware/index": "src/middleware/index.ts",
                 "server/index": "src/server/index.ts",
                 "types/index": "src/types/index.ts",
                 "utils/index": "src/utils/index.ts",
